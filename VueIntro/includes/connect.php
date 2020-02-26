@@ -2,7 +2,7 @@
 
     $db_dsn = array(
         'host' => 'localhost',
-        'dbname' => 'testWithVue',
+        'dbname' => 'tempForVue',
         'charset' => 'utf8',
     );
     

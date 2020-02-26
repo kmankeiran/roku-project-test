@@ -1,5 +1,6 @@
 // import the login component first (actually all components here, but we're starting with login)
 import LoginComponent from "./components/LoginComponent.js"
+import UsersComponent from "./components/UsersComponent.js";
 
 (() => {
   let router = new VueRouter({
@@ -7,6 +8,7 @@ import LoginComponent from "./components/LoginComponent.js"
     routes: [
       { path: '/', redirect: { name: "login" } },
       { path: '/login', name: "login", component: LoginComponent },
+      { path: './users', name: "users", component: UsersComponent }
     ]
   });
 
@@ -34,8 +36,12 @@ import LoginComponent from "./components/LoginComponent.js"
     },
 
     methods: {
-      setAuthenticated(status) {
+      setAuthenticated(status, data) {
         this.authenticated = status;
+        // handle implicit type coercion (bad, bad part of JS)
+        // turn our admin 1 or 0 back into a number
+        this.administrator = parseInt(data.isadmin);
+        this.user = data;
       },
 
       logout() {
@@ -44,9 +50,24 @@ import LoginComponent from "./components/LoginComponent.js"
         // push user back to login page
         this.$router.push({ path: "/login" });
         this.authenticated = false;
+        this.administrator = false;
       }
     },
 
     router: router
   }).$mount("#app");
+
+  // add some router security here
+  router.beforeEach((to, from, next) => {
+    console.log('router guard fired');
+
+    //if the Vue authenticated property is set to false, then 
+    // push the user back to the login screen (cuz they're not logged in)
+
+    if (vm.authenticated == false) {
+      next("/login");
+    } else {
+      next();
+    }
+  })
 })();
